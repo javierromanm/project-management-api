@@ -48,3 +48,13 @@ function loginAdmin($user = null)
 {
     return test()->actingAs($user ?? User::factory()->create(['role' => 'admin']));
 }
+
+function loginClient($user = null)
+{
+    return test()->actingAs($user ?? User::factory()->create(['role' => 'client']));
+}
+
+function loginDeveloper($user = null)
+{
+    return test()->actingAs($user ?? User::factory()->create(['role' => 'developer']));
+}

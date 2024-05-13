@@ -9,6 +9,11 @@ class Client extends Model
 {
     use HasFactory;
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public static function getDataForIndex($request)
     {
         $clients = Client::orderBy('id', 'desc')
