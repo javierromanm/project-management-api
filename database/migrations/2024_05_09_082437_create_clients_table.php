@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-
             $table->foreignId('user_id')->constrained();
-
             $table->string('name');
             $table->string('last_name');
             $table->string('telephone');
-            $table->string('observations');
+            $table->text('observations');
             $table->timestamps();
         });
     }

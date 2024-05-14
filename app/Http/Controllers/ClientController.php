@@ -11,4 +11,13 @@ class ClientController extends Controller
     {
         return response()->json(Client::getDataForIndex($request));
     }
+
+    public function store(Request $request)
+    {
+        $client = new Client;
+
+        $client->storeUser($request);
+
+        $client->storeOrUpdate($request);
+    }
 }
