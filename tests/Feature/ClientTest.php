@@ -80,3 +80,58 @@ it('can store a client if admin', function() {
 
     expectClientPostAndPatchData($client, $postData);
 });
+
+it('cannot store a client if not authenticated', function(){
+    $postData = getClientPostAndPatchData();
+
+    $this->postJson('/api/clients', $postData)
+        ->assertStatus(401);
+});
+
+it('cannot store a client if not admin', function(){
+    $postData = getClientPostAndPatchData();
+
+    loginClient()->postJson('/api/clients', $postData)
+        ->assertStatus(403);
+
+    loginDeveloper()->postJson('/api/clients', $postData)
+        ->assertStatus(403);
+});
+
+it('requires email, name when storing a client', function(){
+    $postData = getClientPostAndPatchData([
+        'email' => null,
+        'name' => null
+    ]);
+
+    loginAdmin()->postJson('/api/clients', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'email',
+            'name'
+        ]);
+});
+
+it('validates email format when storing a client', function(){
+    $postData = getClientPostAndPatchData([
+        'email' => 'invalid-email'
+    ]);
+
+    loginAdmin()->postJson('/api/clients', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'email'
+        ]);;
+});
+
+it('ensures the name field does not exceed 255 characters when storing a client', function(){
+    $postData = getClientPostAndPatchData([
+        'name' => str_repeat('a', 256)
+    ]);
+
+    loginAdmin()->postJson('/api/clients', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'name'
+        ]);
+});
