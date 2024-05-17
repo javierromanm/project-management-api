@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Client;
+use App\Models\User;
 
 use function Pest\Faker\fake;
 
@@ -51,14 +52,14 @@ it('returns all clients paginated by 10 per page if admin', function() {
         ]);
 });
 
-it('does not return all clients if not authenticated', function(){
+it('does not return all clients if not authenticated', function() {
     Client::factory()->count(30)->create();
 
     $this->getJson('/api/clients')
         ->assertStatus(401);
 });
 
-it('does not return all clients if not admin', function(){
+it('does not return all clients if not admin', function() {
     Client::factory()->count(30)->create();
 
     loginClient()->getJson('/api/clients')
@@ -81,14 +82,14 @@ it('can store a client if admin', function() {
     expectClientPostAndPatchData($client, $postData);
 });
 
-it('cannot store a client if not authenticated', function(){
+it('cannot store a client if not authenticated', function() {
     $postData = getClientPostAndPatchData();
 
     $this->postJson('/api/clients', $postData)
         ->assertStatus(401);
 });
 
-it('cannot store a client if not admin', function(){
+it('cannot store a client if not admin', function() {
     $postData = getClientPostAndPatchData();
 
     loginClient()->postJson('/api/clients', $postData)
@@ -98,7 +99,7 @@ it('cannot store a client if not admin', function(){
         ->assertStatus(403);
 });
 
-it('requires email, name when storing a client', function(){
+it('requires email, name when storing a client', function() {
     $postData = getClientPostAndPatchData([
         'email' => null,
         'name' => null
@@ -112,7 +113,7 @@ it('requires email, name when storing a client', function(){
         ]);
 });
 
-it('validates email format when storing a client', function(){
+it('validates email format when storing a client', function() {
     $postData = getClientPostAndPatchData([
         'email' => 'invalid-email'
     ]);
@@ -121,10 +122,10 @@ it('validates email format when storing a client', function(){
         ->assertStatus(422)
         ->assertJsonValidationErrors([
             'email'
-        ]);;
+        ]);
 });
 
-it('ensures the name field does not exceed 255 characters when storing a client', function(){
+it('ensures the name field does not exceed 255 characters when storing a client', function() {
     $postData = getClientPostAndPatchData([
         'name' => str_repeat('a', 256)
     ]);
@@ -134,4 +135,28 @@ it('ensures the name field does not exceed 255 characters when storing a client'
         ->assertJsonValidationErrors([
             'name'
         ]);
+});
+
+it ('does not save the client if user creation fails', function() {
+    $postData = getClientPostAndPatchData([
+        'email' => 'invalid-email'
+    ]);
+
+    loginAdmin()->postJson('/api/clients', $postData)
+        ->assertStatus(422);
+
+    expect(User::count())->toBe(1);
+    expect(Client::count())->toBe(0);
+});
+
+it ('does not save the user if client creation fails', function() {
+    $postData = getClientPostAndPatchData([
+        'last_name' => str_repeat('a', 256)
+    ]);
+
+    loginAdmin()->postJson('/api/clients', $postData)
+        ->assertStatus(422);
+
+    expect(User::count())->toBe(1);
+    expect(Client::count())->toBe(0);
 });

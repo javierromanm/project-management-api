@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
@@ -18,8 +19,21 @@ class ClientController extends Controller
 
         $client = new Client;
 
-        $client->storeUser($request);
+        DB::beginTransaction();
 
-        $client->storeOrUpdate($request);
+        try {
+            $client->storeUser($request);
+
+            $client->storeOrUpdate($request);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return response()->json(['error' => 'Failed to save client and user'], 422);
+        }
+
+        
     }
 }
