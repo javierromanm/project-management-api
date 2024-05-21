@@ -160,3 +160,39 @@ it ('does not save the user if client creation fails', function() {
     expect(User::count())->toBe(1);
     expect(Client::count())->toBe(0);
 });
+
+it('can update a client if admin', function() {
+    $this->withoutExceptionHandling();
+
+    $client = Client::factory()->create();
+
+    $patchData = getClientPostAndPatchData();
+
+    loginAdmin()->patchJson('/api/clients/' . $client->id, $patchData)
+        ->assertStatus(200);
+
+    $clientUpdated = Client::latest()->first();
+
+    expectClientPostAndPatchData($clientUpdated, $patchData);
+});
+
+it('cannot update a client if not authenticated', function() {
+    $client = Client::factory()->create();
+
+    $patchData = getClientPostAndPatchData();
+
+    $this->patchJson('/api/clients/' . $client->id, $patchData)
+        ->assertStatus(401);
+});
+
+it('cannot update a client if not admin', function() {
+    $client = Client::factory()->create();
+
+    $patchData = getClientPostAndPatchData();
+
+    loginClient()->patchJson('/api/clients/' . $client->id, $patchData)
+        ->assertStatus(403);
+
+    loginDeveloper()->patchJson('/api/clients/' . $client->id, $patchData)
+        ->assertStatus(403);
+});

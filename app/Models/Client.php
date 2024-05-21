@@ -61,4 +61,11 @@ class Client extends Model
         $this->observations = $request->observations;
         $this->save();
     }
+
+    public function updateUser($request)
+    {
+        $user = $this->user;
+        $user->email = $request->email;
+        $user->save();
+    }
 }

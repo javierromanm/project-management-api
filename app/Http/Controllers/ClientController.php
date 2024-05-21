@@ -32,8 +32,15 @@ class ClientController extends Controller
             DB::rollback();
 
             return response()->json(['error' => 'Failed to save client and user'], 422);
-        }
-
-        
+        }  
     }
+
+    public function update(Request $request, $id)
+   {
+        $client = Client::find($id);
+
+        $client->updateUser($request);
+
+        $client->storeOrUpdate($request);
+   } 
 }
