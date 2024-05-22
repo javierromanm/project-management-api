@@ -196,3 +196,47 @@ it('cannot update a client if not admin', function() {
     loginDeveloper()->patchJson('/api/clients/' . $client->id, $patchData)
         ->assertStatus(403);
 });
+
+it('requires email, name when updating a client', function() {
+    $client = Client::factory()->create();
+
+    $patchData = getClientPostAndPatchData([
+        'email' => null,
+        'name' => null
+    ]);
+
+    loginAdmin()->patchJson('/api/clients/' . $client->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'email',
+            'name'
+        ]);
+});
+
+it('validates email format when updating a client', function() {
+    $client = Client::factory()->create();
+
+    $patchData = getClientPostAndPatchData([
+        'email' => 'invalid-email'
+    ]);
+
+    loginAdmin()->patchJson('/api/clients/' . $client->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'email'
+        ]);
+});
+
+it('ensures the name field does not exceed 255 characters when updating a client', function() {
+    $client = Client::factory()->create();
+
+    $patchData = getClientPostAndPatchData([
+        'name' => str_repeat('a', 256)
+    ]);
+
+    loginAdmin()->patchJson('/api/clients/' . $client->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'name'
+        ]);
+});

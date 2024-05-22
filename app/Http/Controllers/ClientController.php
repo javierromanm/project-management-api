@@ -37,6 +37,8 @@ class ClientController extends Controller
 
     public function update(Request $request, $id)
    {
+        $request->validate(Client::validationRules());
+
         $client = Client::find($id);
 
         $client->updateUser($request);
