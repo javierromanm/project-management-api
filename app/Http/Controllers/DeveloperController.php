@@ -11,4 +11,13 @@ class DeveloperController extends Controller
     {
         return response()->json(Developer::getDataForIndex($request));
     }
+
+    public function store(Request $request)
+    {
+        $developer = new Developer;
+
+        $developer->storeUser($request);
+
+        $developer->storeOrUpdate($request);
+    }
 }
