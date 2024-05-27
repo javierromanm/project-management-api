@@ -94,3 +94,41 @@ it('cannot store a developer if not admin', function(){
     loginDeveloper()->postJson('/api/developers', $postData)
         ->assertStatus(403);
 });
+
+it('requires email, name when storing a developer', function(){
+    $postData = getDeveloperPostAndPatchData([
+        'email' => null,
+        'name' => null
+    ]);
+
+    loginAdmin()->postJson('/api/developers', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'email',
+            'name'
+        ]);
+});
+
+it('validates email format when storing a developer', function(){
+    $postData = getDeveloperPostAndPatchData([
+        'email' => 'invalid-email'
+    ]);
+
+    loginAdmin()->postJson('/api/developers', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'email'
+        ]);
+});
+
+it('ensures the name field does not exceed 255 characters when storing a developer', function(){
+    $postData = getDeveloperPostAndPatchData([
+        'name' => str_repeat('a', 256)
+    ]);
+
+    loginAdmin()->postJson('/api/developers', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'name'
+        ]);
+});

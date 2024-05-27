@@ -16,6 +16,14 @@ class Developer extends Model
         return $this->belongsTo(User::class);
     }
 
+    public static function validationRules()
+    {
+        return [
+            'email' => 'required|email',
+            'name' => 'required|max:255'
+        ];
+    }
+
     public static function getDataForIndex($request)
     {
         $developers = Developer::orderBy('id', 'desc')

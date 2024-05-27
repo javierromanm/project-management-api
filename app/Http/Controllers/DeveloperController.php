@@ -14,6 +14,8 @@ class DeveloperController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate(Developer::validationRules());
+        
         $developer = new Developer;
 
         $developer->storeUser($request);
