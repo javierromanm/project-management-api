@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Developer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DeveloperController extends Controller
 {
@@ -18,8 +19,20 @@ class DeveloperController extends Controller
         
         $developer = new Developer;
 
-        $developer->storeUser($request);
+        DB::beginTransaction();
 
-        $developer->storeOrUpdate($request);
+        try {
+            $developer->storeUser($request);
+
+            $developer->storeOrUpdate($request);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['error' => 'Failed to save Developer and User'], 500);
+
+        }
     }
 }

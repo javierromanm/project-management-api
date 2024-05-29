@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Developer;
+use App\Models\User;
 
 function getDeveloperPostAndPatchData($overrides = [])
 {
@@ -131,4 +132,28 @@ it('ensures the name field does not exceed 255 characters when storing a develop
         ->assertJsonValidationErrors([
             'name'
         ]);
+});
+
+it('does not save the developer if user creation fails', function(){
+    $postData = getDeveloperPostAndPatchData([
+        'email' => 'invalid-email'
+    ]);
+
+    loginAdmin()->postJson('/api/developers', $postData)
+        ->assertStatus(422);
+
+    expect(User::count())->toBe(1);
+    expect(Developer::count())->toBe(0);
+});
+
+it('does not save the user if developer creation fails', function(){
+    $postData = getDeveloperPostAndPatchData([
+        'last_name' => str_repeat('a', 256)
+    ]);
+
+    loginAdmin()->postJson('/api/developers', $postData)
+        ->assertStatus(500);
+
+    expect(User::count())->toBe(1);
+    expect(Developer::count())->toBe(0);
 });
