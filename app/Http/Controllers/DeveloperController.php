@@ -35,4 +35,15 @@ class DeveloperController extends Controller
 
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate(Developer::validationRules());
+        
+        $developer = Developer::find($id);
+
+        $developer->updateUser($request);
+
+        $developer->storeOrUpdate($request);
+    }
 }

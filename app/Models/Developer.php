@@ -53,6 +53,13 @@ class Developer extends Model
         $this->user_id = $user->id;
     }
 
+    public function updateUser($request)
+    {
+        $user = $this->user;
+        $user->email = $request->email;
+        $user->save();
+    }
+
     public function storeOrUpdate($request)
     {
         $this->name = $request->name;

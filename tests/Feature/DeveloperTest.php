@@ -157,3 +157,83 @@ it('does not save the user if developer creation fails', function(){
     expect(User::count())->toBe(1);
     expect(Developer::count())->toBe(0);
 });
+
+it('can update a developer if admin', function(){
+    $this->withoutExceptionHandling();
+
+    $developer = Developer::factory()->create();
+
+    $patchData = getDeveloperPostAndPatchData();
+
+    loginAdmin()->patchJson('/api/developers/' . $developer->id, $patchData)
+        ->assertStatus(200);
+    
+    $developerUpdated = Developer::latest()->first();
+
+    expectDeveloperPostAndPatchData($developerUpdated, $patchData);
+});
+
+it('cannot update a developer if not authenticated', function(){
+    $developer = Developer::factory()->create();
+
+    $patchData = getDeveloperPostAndPatchData();
+
+    $this->patchJson('/api/developers/' . $developer->id, $patchData)
+        ->assertStatus(401);
+});
+
+it('cannot update a developer if not admin', function(){
+    $developer = Developer::factory()->create();
+
+    $patchData = getDeveloperPostAndPatchData();
+
+    loginClient()->patchJson('/api/developers/' . $developer->id, $patchData)
+        ->assertStatus(403);
+
+    loginDeveloper()->patchJson('/api/developers/' . $developer->id, $patchData)
+        ->assertStatus(403);
+});
+
+it('requires email, name when updating a developer', function(){
+    $developer = Developer::factory()->create();
+
+    $patchData = getDeveloperPostAndPatchData([
+        'email' => null,
+        'name' => null
+    ]);
+
+    loginAdmin()->patchJson('/api/developers/' . $developer->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'email',
+            'name'
+        ]);
+});
+
+it('validates email format when updating a developer', function(){
+    $developer = Developer::factory()->create();
+
+    $patchData = getDeveloperPostAndPatchData([
+        'email' => 'invalid-email'
+    ]);
+
+    loginAdmin()->patchJson('/api/developers/' . $developer->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'email'
+        ]);
+});
+
+it('ensures the name field does not exceed 255 characters when updating a developer', function(){
+    $developer = Developer::factory()->create();
+
+    $patchData = getDeveloperPostAndPatchData([
+        'name' => str_repeat('a', 256)
+    ]);
+
+    loginAdmin()->patchJson('/api/developers/' . $developer->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'name'
+        ]);
+});
