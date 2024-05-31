@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DeveloperController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Middleware\UserIsAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -13,3 +14,5 @@ Route::get('/user', function (Request $request) {
 Route::apiResource('/clients', ClientController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
 
 Route::apiResource('/developers', DeveloperController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
+
+Route::apiResource('/projects', ProjectController::class);
