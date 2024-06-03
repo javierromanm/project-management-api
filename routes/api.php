@@ -15,4 +15,4 @@ Route::apiResource('/clients', ClientController::class)->middleware(['auth:sanct
 
 Route::apiResource('/developers', DeveloperController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
 
-Route::apiResource('/projects', ProjectController::class);
+Route::apiResource('/projects', ProjectController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);

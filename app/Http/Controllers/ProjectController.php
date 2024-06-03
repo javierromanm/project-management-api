@@ -11,4 +11,11 @@ class ProjectController extends Controller
     {
         return response()->json(Project::getDataForIndex($request));
     }
+
+    public function store(Request $request)
+    {
+        $project = new Project;
+
+        $project->storeOrUpdate($request);
+    }
 }

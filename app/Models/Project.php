@@ -55,4 +55,18 @@ class Project extends Model
 
         return ['projects' => $projects];
     }
+
+    public function storeOrUpdate($request)
+    {
+        $this->client_id = $request->client_id;
+        $this->company_id = $request->company_id;
+        $this->status_project_id = $request->status_project_id;
+        $this->status_invoice_id = $request->status_invoice_id;
+        $this->status_payment_id = $request->status_payment_id;
+        $this->price = $request->price;
+        $this->delivery_date = $request->delivery_date;
+        $this->invoice_number = $request->invoice_number;
+        $this->invoice_date = $request->invoice_date;
+        $this->save();
+    }
 }

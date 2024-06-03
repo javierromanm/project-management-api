@@ -26,7 +26,11 @@ class ProjectFactory extends Factory
             'company_id' => Company::factory()->create(),
             'status_project_id' => StatusProject::factory()->create(),
             'status_invoice_id' => StatusInvoice::factory()->create(),
-            'status_payment_id' => StatusPayment::factory()->create()
+            'status_payment_id' => StatusPayment::factory()->create(),
+            'price' => fake()->randomNumber(9, false),
+            'delivery_date' => fake()->date('Y-m-d H:i:s'),
+            'invoice_number' => fake()->randomNumber(5, false),
+            'invoice_date' => fake()->date('Y-m-d H:i:s')
         ];
     }
 }
