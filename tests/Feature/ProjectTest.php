@@ -110,3 +110,49 @@ it('cannot store a project if not admin', function(){
     loginDeveloper()->postJson('/api/projects', $postData)
         ->assertStatus(403);
 });
+
+it('requires status project, status invoice and status payment when storing a project', function(){
+    $postData = getProjectPostAndPatchData([
+        'status_project_id' => null,
+        'status_invoice_id' => null,
+        'status_payment_id' => null
+    ]);
+
+    loginAdmin()->postJson('/api/projects', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'status_project_id',
+            'status_invoice_id',
+            'status_payment_id'
+        ]);
+});
+
+it('ensures price and invoice number is an integer when storing a project', function(){
+    $postData = getProjectPostAndPatchData([
+        'price' => 13.20,
+        'invoice_number' => 125.40
+    ]);
+
+    loginAdmin()->postJson('/api/projects', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'price',
+            'invoice_number'
+        ]);
+});
+
+it('ensures delivery date and invoice date has an specific date time format', function(){
+    $postData = getProjectPostAndPatchData([
+        'delivery_date' => '2005-20-12 10:03:26',
+        'invoice_date' => '2005-20-12 10:03:26'
+    ]);
+
+    loginAdmin()->postJson('/api/projects', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'delivery_date',
+            'invoice_date'
+        ]);
+});
+
+

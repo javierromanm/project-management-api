@@ -34,6 +34,19 @@ class Project extends Model
         return $this->belongsTo(StatusPayment::class);
     }
 
+    public static function validationRules()
+    {
+        return [
+            'status_project_id' => 'required',
+            'status_invoice_id' => 'required',
+            'status_payment_id' => 'required',
+            'price' => 'integer',
+            'invoice_number' => 'integer',
+            'delivery_date' => 'date_format:Y-m-d H:i:s',
+            'invoice_date' => 'date_format:Y-m-d H:i:s'
+        ];
+    }
+
     public static function getDataForIndex($request)
     {
         $projects = Project::orderBy('id', 'desc')

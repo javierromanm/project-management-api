@@ -14,6 +14,8 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate(Project::validationRules());
+        
         $project = new Project;
 
         $project->storeOrUpdate($request);

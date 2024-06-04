@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('status_project_id')->constrained();
             $table->foreignId('status_invoice_id')->constrained();
             $table->foreignId('status_payment_id')->constrained();
-
             $table->integer('price');
             $table->dateTime('delivery_date');
             $table->integer('invoice_number');
