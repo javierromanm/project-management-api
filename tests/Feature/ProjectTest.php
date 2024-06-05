@@ -141,7 +141,7 @@ it('ensures price and invoice number is an integer when storing a project', func
         ]);
 });
 
-it('ensures delivery date and invoice date has an specific date time format', function(){
+it('ensures delivery date and invoice date has an specific date time format when storing a project', function(){
     $postData = getProjectPostAndPatchData([
         'delivery_date' => '2005-20-12 10:03:26',
         'invoice_date' => '2005-20-12 10:03:26'
@@ -155,4 +155,89 @@ it('ensures delivery date and invoice date has an specific date time format', fu
         ]);
 });
 
+it('can update a project if admin', function(){
+    $this->withoutExceptionHandling();
+
+    $project = Project::factory()->create();
+
+    $patchData = getProjectPostAndPatchData();
+
+    loginAdmin()->patchJson('/api/projects/' . $project->id, $patchData)
+        ->assertStatus(200);
+    
+    $projectUpdated = Project::latest()->first();
+
+    expectProjectPostAndPatchData($projectUpdated, $patchData);
+});
+
+it('cannot update a project if not authenticated', function(){
+    $project = Project::factory()->create();
+
+    $patchData = getProjectPostAndPatchData();
+
+    $this->patchJson('/api/projects/' . $project->id, $patchData)
+        ->assertStatus(401);
+});
+
+it('cannot update a project if not admin', function(){
+    $project = Project::factory()->create();
+
+    $patchData = getProjectPostAndPatchData();
+
+    loginClient()->patchJson('/api/projects/' . $project->id, $patchData)
+        ->assertStatus(403);
+
+    loginDeveloper()->patchJson('/api/projects/' . $project->id, $patchData)
+        ->assertStatus(403);
+});
+
+it('requires status project, status invoice and status payment when updating a project', function(){
+    $project = Project::factory()->create();
+
+    $patchData = getProjectPostAndPatchData([
+        'status_project_id' => null,
+        'status_invoice_id' => null,
+        'status_payment_id' => null
+    ]);
+
+    loginAdmin()->patchJson('/api/projects/' . $project->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'status_project_id',
+            'status_invoice_id',
+            'status_payment_id'
+        ]);
+});
+
+it('ensures price and invoice number is an integer when updating a project', function(){
+    $project = Project::factory()->create();
+
+    $patchData = getProjectPostAndPatchData([
+        'price' => 13.20,
+        'invoice_number' => 125.40
+    ]);
+
+    loginAdmin()->patchJson('/api/projects/' . $project->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'price',
+            'invoice_number'
+        ]);
+});
+
+it('ensures delivery date and invoice date has an specific date time format when updating a project', function(){
+    $project = Project::factory()->create();
+
+    $patchData = getProjectPostAndPatchData([
+        'delivery_date' => '2005-20-12 10:03:26',
+        'invoice_date' => '2005-20-12 10:03:26'
+    ]);
+
+    loginAdmin()->patchJson('/api/projects/' . $project->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'delivery_date',
+            'invoice_date'
+        ]);
+});
 

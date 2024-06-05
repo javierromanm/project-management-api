@@ -20,4 +20,13 @@ class ProjectController extends Controller
 
         $project->storeOrUpdate($request);
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate(Project::validationRules());
+        
+        $project = Project::find($id);
+
+        $project->storeOrUpdate($request);
+    }
 }
