@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Developer;
+use App\Models\Project;
 use App\Models\StatusInvoice;
 use App\Models\StatusPayment;
 use App\Models\StatusTask;
@@ -21,10 +22,18 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
+            'project_id' => Project::factory()->create(),
             'developer_id' => Developer::factory()->create(),
             'status_task_id' => StatusTask::factory()->create(),
             'status_invoice_id' => StatusInvoice::factory()->create(),
-            'status_payment_id' => StatusPayment::factory()->create()
+            'status_payment_id' => StatusPayment::factory()->create(),
+            'description' => fake()->sentence,
+            'price_client' => fake()->randomNumber(9, false),
+            'price_developer' => fake()->randomNumber(9, false),
+            'delivery_date_client' => fake()->date('Y-m-d H:i:s'),
+            'delivery_date_developer' => fake()->date('Y-m-d H:i:s'),
+            'invoice_number_developer' => fake()->randomNumber(5, false),
+            'invoice_date_developer'  => fake()->date('Y-m-d H:i:s')
         ];
     }
 }

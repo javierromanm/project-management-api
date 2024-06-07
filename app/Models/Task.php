@@ -54,4 +54,21 @@ class Task extends Model
         
         return ['tasks' => $tasks];
     }
+
+    public function storeOrUpdate($request)
+    {
+        $this->project_id = $request->project_id;
+        $this->developer_id = $request->developer_id;
+        $this->status_task_id = $request->status_task_id;
+        $this->status_invoice_id = $request->status_invoice_id;
+        $this->status_payment_id = $request->status_payment_id;
+        $this->description = $request->description;
+        $this->price_client = $request->price_client;
+        $this->price_developer = $request->price_developer;
+        $this->delivery_date_client = $request->delivery_date_client;
+        $this->delivery_date_developer = $request->delivery_date_developer;
+        $this->invoice_number_developer = $request->invoice_number_developer;
+        $this->invoice_date_developer = $request->invoice_date_developer;
+        $this->save();
+    }
 }

@@ -18,4 +18,4 @@ Route::apiResource('/developers', DeveloperController::class)->middleware(['auth
 
 Route::apiResource('/projects', ProjectController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
 
-Route::apiResource('/tasks', TaskController::class);
+Route::apiResource('/tasks', TaskController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);

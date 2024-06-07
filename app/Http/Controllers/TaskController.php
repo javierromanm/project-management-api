@@ -11,4 +11,11 @@ class TaskController extends Controller
     {
         return response()->json(Task::getDataForIndex($request));
     }
+
+    public function store(Request $request)
+    {
+        $task = new Task;
+
+        $task->storeOrUpdate($request);
+    }
 }
