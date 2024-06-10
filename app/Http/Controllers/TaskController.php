@@ -14,6 +14,8 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate(Task::validationRules());
+        
         $task = new Task;
 
         $task->storeOrUpdate($request);

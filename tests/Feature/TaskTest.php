@@ -74,14 +74,14 @@ it('returns all tasks paginated by 10 if admin', function(){
         ]);
 });
 
-it('does not returns all tasks if not authenticated', function(){
+it('does not return all tasks if not authenticated', function(){
     Task::factory()->count(30)->create();
 
     $this->getJson('/api/tasks')
         ->assertStatus(401);
 });
 
-it('does not returns all tasks if not admin', function(){
+it('does not return all tasks if not admin', function(){
     Task::factory()->count(30)->create();
 
     loginClient()->getJson('/api/tasks')
@@ -119,4 +119,68 @@ it('cannot store a task if not admin', function(){
 
     loginDeveloper()->postJson('/api/tasks', $postData)
         ->assertStatus(403);
+});
+
+it('requires description, project_id, status task, status invoice and status payment when storing a task', function(){
+    $postData = getTaskPostAndPatchData([
+        'description' => null,
+        'project_id' => null,
+        'status_task_id' => null,
+        'status_invoice_id' => null,
+        'status_payment_id' => null,
+    ]);
+
+    loginAdmin()->postJson('/api/tasks', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'description',
+            'project_id',
+            'status_task_id',
+            'status_invoice_id',
+            'status_payment_id'
+        ]);
+});
+
+it('ensures the description field does not exceed 255 characters when storing a task', function(){
+    $postData = getTaskPostAndPatchData([
+        'description' => str_repeat('a', 256)
+    ]);
+
+    loginAdmin()->postJson('/api/tasks', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'description'
+        ]);
+});
+
+it('ensures price_client, price_developer and invoice_number_developer is an integer when storing a task', function(){
+    $postData = getTaskPostAndPatchData([
+        'price_client' => 13.45,
+        'price_developer' => 15.45,
+        'invoice_number_developer' => 23.45
+    ]);
+
+    loginAdmin()->postJson('/api/tasks', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'price_client',
+            'price_developer',
+            'invoice_number_developer'
+        ]);
+});
+
+it('ensures delivery_date_client, delivery_date_developer and invoice_date_developer has a date time format when storing a task', function(){
+    $postData = getTaskPostAndPatchData([
+        'delivery_date_client' => '2005-24-07 10:23:18',
+        'delivery_date_developer' => '2005-24-07 10:23:18',
+        'invoice_date_developer' => '2005-24-07 10:23:18'
+    ]);
+
+    loginAdmin()->postJson('/api/tasks', $postData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'delivery_date_client',
+            'delivery_date_developer',
+            'invoice_date_developer'
+        ]);
 });

@@ -29,6 +29,23 @@ class Task extends Model
         return $this->belongsTo(StatusPayment::class);
     }
 
+    public static function validationRules()
+    {
+        return [
+            'description' => 'required|max:255',
+            'project_id' => 'required|exists:projects,id',
+            'status_task_id' => 'required|exists:status_tasks,id',
+            'status_invoice_id' => 'required|exists:status_invoices,id',
+            'status_payment_id' => 'required|exists:status_payments,id',
+            'price_client' => 'integer',
+            'price_developer' => 'integer',
+            'invoice_number_developer' => 'integer',
+            'delivery_date_client' => 'date_format:Y-m-d H:i:s',
+            'delivery_date_developer' => 'date_format:Y-m-d H:i:s',
+            'invoice_date_developer' => 'date_format:Y-m-d H:i:s'
+        ];
+    }
+
     public static function getDataForIndex($request)
     {
         $tasks = Task::orderBy('id', 'desc')
