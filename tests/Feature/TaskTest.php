@@ -184,3 +184,111 @@ it('ensures delivery_date_client, delivery_date_developer and invoice_date_devel
             'invoice_date_developer'
         ]);
 });
+
+it('can update a task if admin', function(){
+    $this->withoutExceptionHandling();
+
+    $task = Task::factory()->create();
+
+    $patchData = getTaskPostAndPatchData();
+
+    loginAdmin()->patchJson('/api/tasks/' . $task->id, $patchData)
+        ->assertStatus(200);
+    
+    $taskUpdated = Task::latest()->first();
+
+    expectTaskPostAndPatchData($taskUpdated, $patchData);
+});
+
+it('cannot update a task if not autheticated', function(){
+    $task = Task::factory()->create();
+
+    $patchData = getTaskPostAndPatchData();
+
+    $this->patchJson('/api/tasks/' . $task->id, $patchData)
+        ->assertStatus(401);
+});
+
+it('cannot update a task if not admin', function(){
+    $task = Task::factory()->create();
+
+    $patchData = getTaskPostAndPatchData();
+
+    loginClient()->patchJson('/api/tasks/' . $task->id, $patchData)
+        ->assertStatus(403);
+
+    loginDeveloper()->patchJson('/api/tasks/' . $task->id, $patchData)
+        ->assertStatus(403);
+});
+
+it('requires description, project_id, status task, status invoice and status payment when updating a task', function(){
+    $task = Task::factory()->create();
+
+    $patchData = getTaskPostAndPatchData([
+        'description' => null,
+        'project_id' => null,
+        'status_task_id' => null,
+        'status_invoice_id' => null,
+        'status_payment_id' => null,
+    ]);
+
+    loginAdmin()->patchJson('/api/tasks/' . $task->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'description',
+            'project_id',
+            'status_task_id',
+            'status_invoice_id',
+            'status_payment_id'
+        ]);
+});
+
+it('ensures the description field does not exceed 255 characters when updating a task', function(){
+    $task = Task::factory()->create();
+
+    $patchData = getTaskPostAndPatchData([
+        'description' => str_repeat('a', 256)
+    ]);
+
+    loginAdmin()->patchJson('/api/tasks/' . $task->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'description'
+        ]);
+});
+
+it('ensures price_client, price_developer and invoice_number_developer is an integer when updating a task', function(){
+    $task = Task::factory()->create();
+
+    $patchData = getTaskPostAndPatchData([
+        'price_client' => 13.45,
+        'price_developer' => 15.45,
+        'invoice_number_developer' => 23.45
+    ]);
+
+    loginAdmin()->patchJson('/api/tasks/' . $task->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'price_client',
+            'price_developer',
+            'invoice_number_developer'
+        ]);
+});
+
+it('ensures delivery_date_client, delivery_date_developer and invoice_date_developer has a date time format when updating a task', function(){
+    $task = Task::factory()->create();
+
+    $patchData = getTaskPostAndPatchData([
+        'delivery_date_client' => '2005-24-07 10:23:18',
+        'delivery_date_developer' => '2005-24-07 10:23:18',
+        'invoice_date_developer' => '2005-24-07 10:23:18'
+    ]);
+
+    loginAdmin()->patchJson('/api/tasks/' . $task->id, $patchData)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'delivery_date_client',
+            'delivery_date_developer',
+            'invoice_date_developer'
+        ]);
+});

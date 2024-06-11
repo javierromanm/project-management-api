@@ -20,4 +20,13 @@ class TaskController extends Controller
 
         $task->storeOrUpdate($request);
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate(Task::validationRules());
+        
+        $task = Task::find($id);
+
+        $task->storeOrUpdate($request);
+    }
 }
