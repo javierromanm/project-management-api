@@ -10,6 +10,6 @@ The frontend repository, built with Vue CLI, can be found at https://github.com/
 
 You can watch the live programming process of the API in the following YouTube playlist:
 
-[Ver Playlist en YouTube](https://youtube.com/playlist?list=PLEIbsnqtxKPbFVfX3hybUqgY9uBm-UVLa)
+[Watch Playlist on YouTube](https://youtube.com/playlist?list=PLEIbsnqtxKPbFVfX3hybUqgY9uBm-UVLa)
 
 
