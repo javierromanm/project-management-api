@@ -1,6 +1,10 @@
 # API with Laravel 11 using TDD (Pest)
 
-Development of an API with Laravel 11 using TDD (Pest). The project is a web application for Development Project Management, where administrators, clients, and developers can connect. We use Laravel for the backend API and Vue-Cli for the frontend.
+Development of an API with Laravel 11 using TDD (Pest).
+
+This repository contains the backend API for the project management system, built with Laravel 11. It serves as the core for managing development projects, including functionalities for administrators, clients, and developers.
+
+The frontend repository, built with Vue CLI, can be found at https://github.com/javierromanm/project-management-vue-cli.
 
 ## YouTube Playlist
 
