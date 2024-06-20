@@ -32,7 +32,7 @@ Route::post('/login', function(Request $request){
     
 });
 
-Route::apiResource('/clients', ClientController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
+Route::Resource('/clients', ClientController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
 
 Route::apiResource('/developers', DeveloperController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
 

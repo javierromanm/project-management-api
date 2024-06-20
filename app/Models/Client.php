@@ -53,6 +53,21 @@ class Client extends Model
         $this->user_id = $user->id;
     }
 
+    public function getDataForEdit()
+    {
+        $client = $this->only([
+            'id',
+            'name',
+            'last_name',
+            'telephone',
+            'observations'
+        ]);
+
+        $client['email'] = $this->user->email;
+
+        return ['client' => $client];
+    }
+
     public function storeOrUpdate ($request)
     {
         $this->name = $request->name;

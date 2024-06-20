@@ -35,6 +35,12 @@ class ClientController extends Controller
         }  
     }
 
+    public function edit(Request $request, $id)
+    {
+        $client = Client::find($id);
+        return response()->json($client->getDataForEdit($request));
+    }
+
     public function update(Request $request, $id)
    {
         $request->validate(Client::validationRules());
