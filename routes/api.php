@@ -34,8 +34,8 @@ Route::post('/login', function(Request $request){
 
 Route::Resource('/clients', ClientController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
 
-Route::apiResource('/developers', DeveloperController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
+Route::Resource('/developers', DeveloperController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
 
-Route::apiResource('/projects', ProjectController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
+Route::Resource('/projects', ProjectController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
 
-Route::apiResource('/tasks', TaskController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
+Route::Resource('/tasks', TaskController::class)->middleware(['auth:sanctum', UserIsAdmin::class]);
