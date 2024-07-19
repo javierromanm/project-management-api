@@ -26,7 +26,12 @@ class Client extends Model
 
     public static function getDataForIndex($request)
     {
-        $clients = Client::orderBy('id', 'desc')
+        $clients = Client::query()
+            ->when($request->search, function($query, $search) {
+                $query->where('name', 'LIKE', '%' . $search . '%')->get();
+                $query->orWhere('last_name', 'LIKE', '%' . $search . '%')->get();
+            })
+            ->orderBy('id', 'desc')
             ->paginate(10)
             ->through(function($client) {
                 return [
